@@ -1,0 +1,47 @@
+Archive Name: <%= @archive.human_readable_name %>
+<br />
+Archive Description: <%= @archive.description %>
+<br />
+Theme: <%= @archive.theme %>
+<br />
+Language: <%= @archive.language %>
+<br />
+Topbar Links: <%= @archive.topbar_links %>
+<br />
+Info Dropdown Menu Links: <%= @archive.info_dropdown_links %>
+<br />
+Index Name: <%= @archive.index_name %>
+<br />
+Upload Form: <%= @archive.uploadform_instance %>
+<br />
+DocManager: <%= @archive.docmanager_instance %>
+<br />
+LookingGlass: <%= @archive.lookingglass_instance %>
+<br />
+Catalyst: <%= @archive.catalyst_instance %>
+<br />
+Data Sources <%= @archive.data_sources %>
+<br />
+<br />
+
+<a href="<%= @archive.uploadform_instance %>/upload">Upload Documents</a><br />
+<a href="<%= @archive.lookingglass_instance %>">View on LookingGlass</a><br />
+
+<% if is_archive_admin? %>
+  <h3>Administrator Settings</h3>
+  <%= link_to 'Edit Archive', edit_archive_path(@archive) %>
+  <br /><br>
+  <h4>Users with Access</h4>
+  <ul>
+    <% @archive.users.each do |user| %>
+    <li><%= user.username %>
+      <% if not_an_admin?(user) %>
+      (<%= link_to 'Remove', archive_remove_user_access_path(@archive, user: user.username), method: 'post' %>)
+      <% end %>
+    </li>
+  <% end %>
+  </ul>
+  <br />
+  
+  <%= link_to 'Give User Access', archive_give_user_access_form_path(@archive) %>
+<% end %>

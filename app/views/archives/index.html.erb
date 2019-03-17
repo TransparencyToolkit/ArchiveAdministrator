@@ -1,0 +1,8 @@
+<h1> Available Archives</h1>
+<%= link_to "Create New Archive", new_archive_path %><br />
+<hr>
+<% @archives.each do |archive| %>
+  <h3><%= link_to archive.human_readable_name, archive_path(archive) %></h3>
+  <a href="<%= archive.uploadform_instance %>/upload/<%= archive.index_name %>">Upload Documents</a>    
+  <a href="<%= archive.lookingglass_instance %>">View on LookingGlass</a><br /><br/><hr />
+<% end %>

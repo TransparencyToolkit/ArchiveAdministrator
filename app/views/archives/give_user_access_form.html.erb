@@ -1,0 +1,6 @@
+<%= form_with url: archive_add_user_to_archive_path, local: true do |f| %>
+   <%= f.hidden_field :archive_id, value: @archive.id %>
+   <%= f.label :user_to_add %>
+   <%= f.text_field :user_to_add %>
+   <%= f.submit "Give User Access to Archive" %>
+<% end %>  
