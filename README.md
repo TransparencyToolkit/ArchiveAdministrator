@@ -18,9 +18,14 @@ the hosted archive service.
 
 3. bundle install
 
-4. Run: QUEUE=* rake environment resque:work
+4. Set the following env variables in config/initializers/tt_instance_config.rb:
 
-5. Start the app: rails server -p 3002
+   * ARCHIVE_CONFIG_PATH: The path where archive config files should be saved
+   * ARCHIVEADMIN_URL: The url where this application is accessible
+
+5. Run: QUEUE=* rake environment resque:work
+
+6. Start the app: rails server -p 3002 (Note: DocManager must be running)
 
 
 ## Limitations
@@ -39,5 +44,4 @@ secret key needs to be gotten with rails console.
 4. Run the OCR server manually
 
 It does, however, create the DM project/data sources and elastic index
-automatically. The above 4 points will be implemented next once the
-containerization architecture is set.
+automatically as well as config files with env variables.

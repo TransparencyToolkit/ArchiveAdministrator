@@ -89,7 +89,7 @@ class ArchivesController < ApplicationController
     @archive.admin_users = [current_user.id]
     
     # Create the archive on DocManager
-    ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), @archive.docmanager_instance, index_name)
+    ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), @archive.docmanager_instance, index_name, @archive)
     
     if @archive.save
       redirect_to @archive
