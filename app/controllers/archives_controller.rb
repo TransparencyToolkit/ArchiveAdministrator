@@ -158,8 +158,8 @@ class ArchivesController < ApplicationController
       docmanager_instance: "http://0.0.0.0:3000",
       lookingglass_instance: "http://localhost:3001",
       catalyst_instance: "http://localhost:9004",
-      ocr_in_path: "/home/user/ocr_in",
-      ocr_out_path: "/home/user/ocr_out",
+      ocr_in_path: "/home/tt/ocr_in",
+      ocr_out_path: "/home/tt/ocr_out",
       archive_key: SecureRandom.base64(100)
     }
   end
