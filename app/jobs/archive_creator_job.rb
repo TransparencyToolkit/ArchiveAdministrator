@@ -46,7 +46,8 @@ class ArchiveCreatorJob < ApplicationJob
 
     # Generate OCR server config
     ocrserver = { "OCR_IN_PATH": archive[:ocr_in_path],
-                  "OCR_OUT_PATH": archive[:ocr_out_path] }
+                  "OCR_OUT_PATH": archive[:ocr_out_path],
+                  "PROJECT_INDEX": archive[:index_name] }
     gen_service_config(ocrserver, archive_config_dir, "ocrserver")
 
     # Generate IndexServer config
