@@ -9,12 +9,71 @@ class ArchivesController < ApplicationController
     end
   end
 
+  # Publish the archive
+  def publish_archive_settings
+    # Get the archive details and dataspec
+    @archive = Archive.find(params["archive_id"])
+    http_dataspec = Curl.get("#{@archive.docmanager_instance}/get_project_spec", {index_name: @archive.index_name})
+    @dataspec = JSON.parse(http_dataspec.body_str)
+
+    # Get the facets and values in array
+    http_facets = Curl.get("#{@archive.docmanager_instance}/get_docs_on_index_page", {start: 0, index_name: @archive.index_name})
+    @facets = JSON.parse(http_facets.body_str)["aggregations"].map{|f| [f[0], f[1]["buckets"].map{|v| v["key"]}]}.to_h
+    
+    render "publish_archive_settings"
+  end
+
+  # Receive post request when archive published
+  def publish_archive
+    # Get the parameters to pass
+    settings_by_type = publish_filter_settings
+    @archive = Archive.find(params["archive_id"])
+    last_export_date = get_last_export_date
+
+    # Set archive values based on input options
+    @archive.last_export_date = Time.now
+    @archive.save
+
+    # Call the publish archive create job
+    ArchivePublishJob.perform_now(@archive, settings_by_type, last_export_date)
+    flash[:success] = "Your archive is being published. It may take some time for the data to transfer to the public instance."
+    redirect_to @archive
+  end
+
+  # Get the last export date for archive
+  def get_last_export_date
+    @archive.last_export_date ? (return @archive.last_export_date) : (return Time.at(0))
+  end
+
+  # Get list of document types to publish and params for each
+  def publish_filter_settings
+    doc_types_to_publish = get_doc_types_to_publish
+    return doc_types_to_publish.inject({}) do |settings, doc_type|
+      params_for_type = params.to_unsafe_h.to_a.select{|p| p[0].include?(doc_type)}.to_h
+      field_to_select_published = params_for_type["filterfield_#{doc_type}"]
+      facet_values_that_mean_publish = params_for_type["#{doc_type}_filtervals"].reject!(&:blank?)
+      fields_to_include = params_for_type["#{doc_type}_include"].reject!(&:blank?)
+
+      # Set the settings to filter for with this doc type
+      settings[doc_type] = { publish_selector_field: field_to_select_published,
+                             facet_vals_to_publish: facet_values_that_mean_publish,
+                             fields_to_include: fields_to_include }
+      settings
+    end
+  end
+
+  # Get an array of the document types that should be published
+  def get_doc_types_to_publish
+    return params.to_unsafe_h.to_a.select{|i| i[0].include?("publish_") && i[1] == "1"}.map{|d| d[0].split("publish_").last}
+  end
+
   def update
     @archive = Archive.find(params["id"])
     
     # Update the archive settings
     if params["archive"] && is_archive_admin?
       @archive.update(params["archive"].permit(:human_readable_name,
+                                               :public_archive_subdomain,
                                                :description,
                                                :theme,
                                                :language,
@@ -76,14 +135,15 @@ class ArchivesController < ApplicationController
     # Save the archive settings
     index_name = gen_index_name(params[:archive][:human_readable_name])
     @archive = Archive.new({human_readable_name: params[:archive][:human_readable_name],
-                           description: params[:archive][:description],
-                           theme: params[:archive][:theme],
-                           language: params[:archive][:language],
-                           topbar_links: format_hash_param(params[:archive][:topbar_links]),
-                           info_dropdown_links: format_hash_param(params[:archive][:info_dropdown_links]),
-                           index_name: index_name,
-                           data_sources: get_default_data_sources}.merge(set_default_pipeline_urls))
-
+                            public_archive_subdomain: params[:archive][:public_archive_subdomain],
+                            description: params[:archive][:description],
+                            theme: params[:archive][:theme],
+                            language: params[:archive][:language],
+                            topbar_links: format_hash_param(params[:archive][:topbar_links]),
+                            info_dropdown_links: format_hash_param(params[:archive][:info_dropdown_links]),
+                            index_name: index_name,
+                            data_sources: get_default_data_sources}.merge(set_default_pipeline_urls))
+    
     # Associate archive with the appropriate user
     @archive.users << User.find(current_user.id)
     @archive.admin_users = [current_user.id]
@@ -94,6 +154,7 @@ class ArchivesController < ApplicationController
     if @archive.save
       redirect_to @archive
     else
+      flash[:error] = "Subdomain chosen already in use. Please choose another."
       render "new"
     end
   end
@@ -153,15 +214,38 @@ class ArchivesController < ApplicationController
 
   # Set the URLS for the other parts of the pipeline
   def set_default_pipeline_urls
+    archive_gateway_ip, archive_vm_ip = set_archive_ip
     return {
+      archive_gateway_ip: archive_gateway_ip,
+      archive_vm_ip: archive_vm_ip,
       uploadform_instance: "http://localhost:9292",
       docmanager_instance: "http://0.0.0.0:3000",
       lookingglass_instance: "http://localhost:3001",
       catalyst_instance: "http://localhost:9004",
       ocr_in_path: "/home/tt/ocr_in",
       ocr_out_path: "/home/tt/ocr_out",
+      save_export_path: "/home/tt/export_out",
+      sync_jsondata_path: "http://localhost:3003:/home/tt/ocr_out/ocred_docs",
+      sync_rawdoc_path: "http://localhost:3003:/home/tt/ocr_out/raw_docs",
+      sync_config_path: "http://localhost:3003:/home/tt/Ansible/DocManager/dataspec_files",
       archive_key: SecureRandom.base64(100)
     }
+  end
+
+  # Generate IP address for new archive
+  def set_archive_ip
+    # Generate the archive IP
+    subnet_arr = [*2..255]-[13]
+    s1 = subnet_arr.sample
+    s2 = subnet_arr.sample
+    ip_base = "10.#{s1}.#{s2}."
+
+    # Check if one exists with IP, if so run again. Otherwise return.
+    if Archive.find_by(archive_gateway_ip: ip_base+"1")
+      set_archive_ip
+    else
+      return ip_base+"1", ip_base+"2"
+    end
   end
 
   # Generate the index name

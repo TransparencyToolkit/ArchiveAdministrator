@@ -1,4 +1,5 @@
 class ArchiveCreatorJob < ApplicationJob
+  include ConfigGenUtils
   queue_as :default
 
   # Create a new archive on docmanager
@@ -22,7 +23,14 @@ class ArchiveCreatorJob < ApplicationJob
   def create_pipeline_configs(archive_config_dir, archive)
     # Generate Docmanager config
     docmanager = { "DOCMANAGER_URL": archive[:docmanager_instance],
-                   "CATALYST_URL": archive[:catalyst_instance]}
+                   "CATALYST_URL": archive[:catalyst_instance],
+                   "SAVE_EXPORT_PATH": archive[:save_export_path],
+                   "SYNC_JSONDATA_PATH": archive[:sync_jsondata_path],
+                   "SYNC_RAWDOC_PATH": archive[:sync_rawdoc_path],
+                   "SYNC_CONFIG_PATH": archive[:sync_config_path],
+                   "ARCHIVE_GATEWAY_IP": archive[:archive_gateway_ip],
+                   "ARCHIVE_VM_IP": archive[:archive_vm_ip]
+                   }
     gen_service_config(docmanager, archive_config_dir, "docmanager")
 
     # Generate LG config
@@ -58,19 +66,5 @@ class ArchiveCreatorJob < ApplicationJob
     # Generate Catalyst config
     catalyst = { "DOCMANAGER_URL": archive[:docmanager_instance] }
     gen_service_config(catalyst, archive_config_dir, "catalyst")
-  end
-
-  # Generate a config file for a service with env vars
-  def gen_service_config(env_hash, archive_config_dir, service_name)
-    # Generate the config file
-    str = "[Service]\n"
-    env_hash.each do |env_var_name, value|
-      str += 'Environment="'+env_var_name.to_s+'='+value.to_s+'"'+"\n"
-    end
-
-    # Write env variables to a file
-    service_config_path = "#{archive_config_dir}/#{service_name}.service.d"
-    FileUtils.mkdir_p(service_config_path)
-    File.write("#{service_config_path}/#{service_name}.conf", str)
   end
 end
