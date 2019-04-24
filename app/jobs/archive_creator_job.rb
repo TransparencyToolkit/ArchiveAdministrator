@@ -19,17 +19,25 @@ class ArchiveCreatorJob < ApplicationJob
     create_pipeline_configs(archive_config_dir, archive)
   end
 
+  # Generate config file for IP addresses
+  def gen_ip_config_file(archive_config_dir, archive)
+    ip_config = {"ARCHIVE_GATEWAY_IP": archive[:archive_gateway_ip],
+                 "ARCHIVE_VM_IP": archive[:archive_vm_ip]}
+    config_path = "#{archive_config_dir}/ip_config.json"
+    File.write(config_path, JSON.pretty_generate(ip_config))
+  end
+
   # Generate config files with environment variables for each app in the pipeline
   def create_pipeline_configs(archive_config_dir, archive)
+    gen_ip_config_file(archive_config_dir, archive)
+    
     # Generate Docmanager config
     docmanager = { "DOCMANAGER_URL": archive[:docmanager_instance],
                    "CATALYST_URL": archive[:catalyst_instance],
                    "SAVE_EXPORT_PATH": archive[:save_export_path],
                    "SYNC_JSONDATA_PATH": archive[:sync_jsondata_path],
                    "SYNC_RAWDOC_PATH": archive[:sync_rawdoc_path],
-                   "SYNC_CONFIG_PATH": archive[:sync_config_path],
-                   "ARCHIVE_GATEWAY_IP": archive[:archive_gateway_ip],
-                   "ARCHIVE_VM_IP": archive[:archive_vm_ip]
+                   "SYNC_CONFIG_PATH": archive[:sync_config_path]
                    }
     gen_service_config(docmanager, archive_config_dir, "docmanager")
 
