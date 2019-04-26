@@ -12,20 +12,22 @@ the hosted archive service.
 
 ## Install
 
+Make sure you have nodejs installed
+
 1. Pull this repository
-
-2. Install the redis-server debian package
-
-3. bundle install
-
-4. Set the following env variables in config/initializers/tt_instance_config.rb:
-
+2. Install the `redis-server` debian package
+3. Run `bundle install`
+4. Set the following env variables in `config/initializers/tt_instance_config.rb`
    * ARCHIVE_CONFIG_PATH: The path where archive config files should be saved
    * ARCHIVEADMIN_URL: The url where this application is accessible
 
-5. Run: QUEUE=* rake environment resque:work
 
-6. Start the app: rails server -p 3002 (Note: DocManager must be running)
+## Run App
+
+Note: `DocManager` must be running
+
+1. Run Redis: `QUEUE=* rake environment resque:work`
+2. Start the app: `rails server -p 3002` 
 
 
 ## Limitations
@@ -33,9 +35,7 @@ the hosted archive service.
 With the current version of this software, you still need to do the following:
 
 1. Manually install all pipeline components
-
 2. Start all pipeline components manually or with a script
-
 3. Manually set all environment variables. To work, the PROJECT_INDEX and
 ARCHIVE_SECRET_KEY variables need to be set to those for the corresponding
 archive. The index name for an archive is viewable on the interface. The
