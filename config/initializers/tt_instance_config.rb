@@ -5,5 +5,8 @@ ENV['ARCHIVEADMIN_URL'] = "http://localhost:3002" if ENV['ARCHIVEADMIN_URL'] == 
 # Set time after which unused private archives should be shutdown
 ENV['HOURS_TO_ARCHIVEVM_TIMEOUT'] = "12" if ENV['HOURS_TO_ARCHIVEVM_TIMEOUT'] == nil
 
+# Set to true if testing locally not with VM. Not needed in production.
+ENV['TESTMODE'] = true if ENV['TESTMODE'] == nil
+
 # Set domain to use for private archives
 ENV['PREPUB_ARCHIVE_DOMAIN'] = "https://transparency.tools" if ENV['PREPUB_ARCHIVE_DOMAIN'] == nil

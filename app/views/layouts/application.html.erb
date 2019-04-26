@@ -26,13 +26,13 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
+                    <% if user_signed_in? %>
                     <li>
                         <a href="/">
                             <i class="icon-home"></i>
                             Home
                         </a>
                     </li>
-                    <% if user_signed_in? %>
                     <li>
                         <a href="<%= edit_user_registration_path %>">
                             <i class="icon-user"></i>

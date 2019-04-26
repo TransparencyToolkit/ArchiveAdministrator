@@ -24,20 +24,14 @@ Make sure you have nodejs installed
    * TESTMODE: Set to true if testing locally not with VM. Not needed in production.
    * PREPUB_ARCHIVE_DOMAIN: Domain used for private archives
 
-
-<<<<<<< HEAD
 ## Run App
 
 Note: `DocManager` must be running
 
 1. Run Redis: `QUEUE=* rake environment resque:work`
 2. Start the app: `rails server -p 3002` 
-=======
-6. Run bundle exec crono RAILS_ENV=development
-(maybe with production instead of development)
-
-7. Start the app: rails server -p 3002 (Note: DocManager must be running)
->>>>>>> 1f497245befd3e81f6db94279c0be409064c6c18
+3. Run `bundle exec crono RAILS_ENV=development` in a session (only needed for `production`)
+4. Start the app: rails server -p 3002 (Note: DocManager must be running)
 
 
 ## Limitations
@@ -46,8 +40,8 @@ With the current version of this software, you still need to do the following:
 
 1. Manually install all pipeline components
 2. Start all pipeline components manually or with a script
-3. Manually set all environment variables. To work, the PROJECT_INDEX and
-ARCHIVE_SECRET_KEY variables need to be set to those for the corresponding
+3. Manually set all environment variables. To work, the `PROJECT_INDEX` and
+`ARCHIVE_SECRET_KEY` variables need to be set to those for the corresponding
 archive. The index name for an archive is viewable on the interface. The
 secret key needs to be gotten with rails console.
 
