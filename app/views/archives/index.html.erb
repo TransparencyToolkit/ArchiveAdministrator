@@ -1,8 +1,39 @@
-<h1> Available Archives</h1>
-<%= link_to "Create New Archive", new_archive_path %><br />
-<hr>
-<% @archives.each do |archive| %>
-  <h3><%= link_to archive.human_readable_name, archive_path(archive) %></h3>
-  <a href="<%= archive.uploadform_instance %>/upload/<%= archive.index_name %>">Upload Documents</a>    
-  <a href="<%= archive.lookingglass_instance %>">View on LookingGlass</a><br /><br/><hr />
+<% if @archives.nil? %>
+<h1 class="pull-left">Your Archives</h1>
+<%= link_to "Create New Archive", new_archive_path, class: "btn btn-primary pull-right" %><br />
+<div class="clearfix"></div>
+<div class="white-section">
+    <ul class="list-unstyled">
+        <% @archives.each do |archive| %>
+        <li>
+            <h3><%= link_to archive.human_readable_name, archive_path(archive) %></h3>
+            <a href="<%= archive.uploadform_instance %>/upload/<%= archive.index_name %>" class="btn btn-primary">
+                Upload Documents
+            </a>
+            <a href="<%= archive.lookingglass_instance %>" class="btn btn-primary">
+                View on LookingGlass
+            </a>
+        </li>
+        <% end %>
+    </ul>
+</div>
+<% else %>
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="white-section">
+            <h1 class="remove-top">Welcome</h1>
+            <p class="add-bottom" style="font-size:1.75rem;">
+                Welcome to the Transparency Toolkit archive platform. Our goal is to make analyzing large amounts of documents as easy as possible. However, we've just launched this platform so you may expereince bugs. If you have any issues or ideas <a href="/feedback">give us feedback</a>.
+            </p>
+            <h3>Creating Archives</h3>
+            <p class="add-bottom" style="font-size:1.75rem;">
+                The first step is to create an archive. Don't worry too much about what you call it or the details as they can all be edited later.
+                Additionally, you can create as many archives as you see a need for.
+            </p>
+            <a href="<%= new_archive_path %>" class="btn btn-lg btn-primary">
+                Get Started Now
+            </a>
+        </div>
+    </div>
+</div>
 <% end %>

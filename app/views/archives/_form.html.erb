@@ -1,31 +1,44 @@
 <%= form_for @archive do |f| %>
-   <%= f.label :human_readable_name %>
-   <%= f.text_field :human_readable_name %>
-   <br /><br />
-   <%= f.label :description %>
-   <%= f.text_area :description %>
-   <br /><br />
-   <%= f.label :theme %>
-   <%= f.select :theme, JSON.parse(File.read("app/views/archives/json_select_lists/theme_list.json")) %>
-   <br /><br />
-   <%= f.label :language %>
-   <%= f.select :language, JSON.parse(File.read("app/views/archives/json_select_lists/language_list.json")) %>
-   <br /><br />
-   <%= f.label :topbar_links %><br /><br />
-   <%= f.fields_for :topbar_links do |t| %>
-     <%= t.label :link_title %>
-     <%= t.text_field :link_title %>
-     <%= t.label :link %>
-     <%= t.text_field :link %>
-   <% end %>
-   <br /><br />
-   <%= f.label :info_dropdown_links %><br /><br />
-   <%= f.fields_for :info_dropdown_links do |t| %>
-     <%= t.label :link_title %>
-     <%= t.text_field :link_title %>
-     <%= t.label :link %>
-     <%= t.text_field :link %>
-   <% end %>  
-   <br /><br />
-   <%= f.submit %>
+    <h4>Basic Info</h4>
+    <div class="form-group">
+        <%= f.label :archive_name %>
+        <%= f.text_field :human_readable_name, class: "form-control" %>
+    </div>
+    <div class="form-group">
+        <%= f.label :description %>
+        <%= f.text_area :description, class: "form-control" %>
+    </div>
+    <div class="row add-bottom">
+        <div class="col-md-6">
+            <%= f.label :theme %>
+            <%= f.select :theme, JSON.parse(File.read("app/views/archives/json_select_lists/theme_list.json")), {}, class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+            <%= f.label :language %>
+            <%= f.select :language, JSON.parse(File.read("app/views/archives/json_select_lists/language_list.json")), {}, class: "form-control" %>
+        </div>
+    </div>
+    <div class="row more-bottom">
+        <div class="col-md-6">
+            <h4>Top Bar Links</h4>
+            <%= f.fields_for :topbar_links do |t| %>
+            <%= t.label :link_title %>
+            <%= t.text_field :link_title, class: "form-control" %>
+            <%= t.label :link %>
+            <%= t.text_field :link, class: "form-control" %>
+            <% end %>
+        </div>
+        <div class="col-md-6">
+            <h4>Info Dropdown Links</h4>
+            <%= f.fields_for :info_dropdown_links do |t| %>
+            <%= t.label :link_title %>
+            <%= t.text_field :link_title, class: "form-control" %>
+            <%= t.label :link %>
+            <%= t.text_field :link, class: "form-control" %>
+            <% end %>
+        </div>
+    </div>
+    <div class="form-group text-right">
+        <%= f.submit class: "btn btn-primary" %>
+    </div>
 <% end %>

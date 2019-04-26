@@ -1,47 +1,117 @@
-Archive Name: <%= @archive.human_readable_name %>
-<br />
-Archive Description: <%= @archive.description %>
-<br />
-Theme: <%= @archive.theme %>
-<br />
-Language: <%= @archive.language %>
-<br />
-Topbar Links: <%= @archive.topbar_links %>
-<br />
-Info Dropdown Menu Links: <%= @archive.info_dropdown_links %>
-<br />
-Index Name: <%= @archive.index_name %>
-<br />
-Upload Form: <%= @archive.uploadform_instance %>
-<br />
-DocManager: <%= @archive.docmanager_instance %>
-<br />
-LookingGlass: <%= @archive.lookingglass_instance %>
-<br />
-Catalyst: <%= @archive.catalyst_instance %>
-<br />
-Data Sources <%= @archive.data_sources %>
-<br />
-<br />
+<h1>Archive</h1>
 
-<a href="<%= @archive.uploadform_instance %>/upload">Upload Documents</a><br />
-<a href="<%= @archive.lookingglass_instance %>">View on LookingGlass</a><br />
+<div class="white-section">
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                <strong class="label">Archive Name</strong>
+                <span class="name"><%= @archive.human_readable_name %></span>
+            </p>
+            <p>
+                <strong class="label">Description</strong>
+                <%= @archive.description %>
+            </p>
+            <p>
+                <strong class="label">Theme</strong>
+                <%= @archive.theme %>
+            </p>
+            <p>
+                <strong class="label">Language</strong>
+                <%= @archive.language %>
+            </p>
+            <% if @archive.topbar_links.nil? %>
+            <p>
+                <strong class="label">Topbar Links</strong>
+                <%= @archive.topbar_links %>
+                <% @archive.topbar_links do |topbar| %>
+                    <%= topbar.link %>
+                <% end %>
+            </p>
+            <% end %>
+            <% if @archive.info_dropdown_links %>
+            <p>
+                <strong class="label">Info Dropdown Links</strong>
+                <%= @archive.info_dropdown_links %>
+                <% @archive.info_dropdown_links do |info| %>
+                    <%= info.link %>
+                <% end %>
+            </p>
+            <% end %>
 
-<% if is_archive_admin? %>
-  <h3>Administrator Settings</h3>
-  <%= link_to 'Edit Archive', edit_archive_path(@archive) %>
-  <br /><br>
-  <h4>Users with Access</h4>
-  <ul>
-    <% @archive.users.each do |user| %>
-    <li><%= user.username %>
-      <% if not_an_admin?(user) %>
-      (<%= link_to 'Remove', archive_remove_user_access_path(@archive, user: user.username), method: 'post' %>)
-      <% end %>
-    </li>
-  <% end %>
-  </ul>
-  <br />
-  
-  <%= link_to 'Give User Access', archive_give_user_access_form_path(@archive) %>
-<% end %>
+            <a href="<%= @archive.uploadform_instance %>/upload" class="btn btn-primary">
+                <i class="icon-upload"></i>
+                Upload Documents
+            </a>
+
+            <a href="<%= @archive.lookingglass_instance %>" class="btn btn-primary">
+                <i class="icon-logo"></i>
+                View on LookingGlass
+            </a>
+
+            <a href="<%= @archive.lookingglass_instance %>/catalyst" class="btn btn-primary">
+                <i class="icon-analysis"></i>
+                Catalyst Text Miner
+            </a>
+            <hr>
+
+            <h4>Technical Details</h4>
+            <p>
+                <strong class="label">Index Name</strong>
+                <%= @archive.index_name %>
+            </p>
+            <p>
+                <strong class="label">Upload Form</strong>
+                <%= @archive.uploadform_instance %>
+            </p>
+            <p>
+                <strong class="label">DocManager</strong>
+                <%= @archive.docmanager_instance %>
+            </p>
+            <strong class="label">LookingGlass</strong>
+            <%= @archive.lookingglass_instance %>
+            </p>
+            <p>
+                <strong class="label">Catalyst</strong>
+                <%= @archive.catalyst_instance %>
+            </p>
+
+            <p>
+            <strong class="label">Data Sources</strong>
+            <pre>
+            <% @archive.data_sources.each { |item| %>
+                <%= item %>
+            <% } %>
+            </pre>
+            </p>
+
+            <% if is_archive_admin? %>
+            <h3>Administrator Settings</h3>
+            <a href="<%= edit_archive_path(@archive) %>" class="btn btn-primary">
+                <i class="icon-edit"></i>
+                Edit Archive
+            </a>
+
+
+            <h4>Users With Access</h4>
+            <ul class="list-unstyled">
+                <% @archive.users.each do |user| %>
+                <li>
+                    <i class="icon-user"></i>
+                    <%= user.username %> - <%= user.email %>
+                    <% if not_an_admin?(user) %>
+                    (<%= link_to 'Remove', archive_remove_user_access_path(@archive, user: user.username), method: 'post' %>)
+                    <% end %>
+                </li>
+                <% end %>
+            </ul>
+            <br />
+
+            <a href="<%= archive_give_user_access_form_path(@archive) %>" class="btn btn-primary">
+                <i class="icon-user"></i>
+                Give User Access
+            </a>
+            <% end %>
+
+        </div>
+    </div>
+</div>
