@@ -1,6 +1,7 @@
 class ArchivesController < ApplicationController
   include AccessManagement
   include ArchiveControlTouchFile
+  include ConfigGenUtils
   
   def index
     # Get archives for the current user
@@ -16,11 +17,11 @@ class ArchivesController < ApplicationController
   def publish_archive_settings
     # Get the archive details and dataspec
     @archive = Archive.find(params["archive_id"])
-    http_dataspec = Curl.get("#{@archive.docmanager_instance}/get_project_spec", {index_name: @archive.index_name})
+    http_dataspec = Curl.get("#{set_dm_path(@archive)}/get_project_spec", {index_name: @archive.index_name})
     @dataspec = JSON.parse(http_dataspec.body_str)
 
     # Get the facets and values in array
-    http_facets = Curl.get("#{@archive.docmanager_instance}/get_docs_on_index_page", {start: 0, index_name: @archive.index_name})
+    http_facets = Curl.get("#{set_dm_path(@archive)}/get_docs_on_index_page", {start: 0, index_name: @archive.index_name})
     @facets = JSON.parse(http_facets.body_str)["aggregations"].map{|f| [f[0], f[1]["buckets"].map{|v| v["key"]}]}.to_h
     
     render "publish_archive_settings"
@@ -86,7 +87,7 @@ class ArchivesController < ApplicationController
                                                :language,
                                                topbar_links: [:link_title, :link],
                                                info_dropdown_links: [:link_title, :link]).to_hash)
-      ArchiveUpdateJob.perform_now(gen_archive_config_json(@archive), @archive.docmanager_instance, @archive.index_name)
+      ArchiveUpdateJob.perform_now(gen_archive_config_json(@archive), @archive.index_name, @archive)
       
       redirect_to @archive
     else
@@ -151,14 +152,14 @@ class ArchivesController < ApplicationController
                             topbar_links: format_hash_param(params[:archive][:topbar_links]),
                             info_dropdown_links: format_hash_param(params[:archive][:info_dropdown_links]),
                             index_name: index_name,
-                            data_sources: get_default_data_sources}.merge(set_default_pipeline_urls))
+                            data_sources: get_default_data_sources}.merge(set_default_pipeline_urls(index_name)))
     
     # Associate archive with the appropriate user
     @archive.users << User.find(current_user.id)
     @archive.admin_users = [current_user.id]
     
     # Create the archive on DocManager
-    ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), @archive.docmanager_instance, index_name, @archive)
+    ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), index_name, @archive)
     
     if @archive.save
       update_last_access_date(@archive)
@@ -232,14 +233,14 @@ class ArchivesController < ApplicationController
   end
 
   # Set the URLS for the other parts of the pipeline
-  def set_default_pipeline_urls
+  def set_default_pipeline_urls(index_name)
     archive_gateway_ip, archive_vm_ip = set_archive_ip
     return {
       archive_gateway_ip: archive_gateway_ip,
       archive_vm_ip: archive_vm_ip,
-      uploadform_instance: "http://localhost:9292",
+      uploadform_instance: set_archive_url(index_name, "upload"),
       docmanager_instance: "http://0.0.0.0:3000",
-      lookingglass_instance: "http://localhost:3001",
+      lookingglass_instance: set_archive_url(index_name, "lookingglass"),
       catalyst_instance: "http://localhost:9004",
       ocr_in_path: "/home/tt/ocr_in",
       ocr_out_path: "/home/tt/ocr_out",

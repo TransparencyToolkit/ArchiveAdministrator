@@ -23,6 +23,8 @@ the hosted archive service.
    * ARCHIVE_CONFIG_PATH: The path where archive config files should be saved
    * ARCHIVEADMIN_URL: The url where this application is accessible
    * HOURS_TO_ARCHIVEVM_TIMEOUT: # of hours where unused archive vms should shutdown
+   * TESTMODE: Set to true if testing locally not with VM. Not needed in production.
+   * PREPUB_ARCHIVE_DOMAIN: Domain used for private archives
 
 5. Run: QUEUE=* rake environment resque:work
 

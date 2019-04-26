@@ -3,12 +3,12 @@ class ArchiveCreatorJob < ApplicationJob
   queue_as :default
 
   # Create a new archive on docmanager
-  def perform(archive_config_json, docmanager_url, index_name, archive)
+  def perform(archive_config_json, index_name, archive)
     # Create the config files needed to generate archive VM
     save_archive_service_configs(archive)
 
     # Create a new archive on docmanager
-    c = Curl::Easy.new("#{docmanager_url}/create_archive")
+    c = Curl::Easy.new("#{set_dm_path(archive)}/create_archive")
     c.http_post(Curl::PostField.content("archive_config_json", archive_config_json))
   end
 
