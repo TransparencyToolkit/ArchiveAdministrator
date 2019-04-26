@@ -1,13 +1,14 @@
 class ArchiveCreatorJob < ApplicationJob
+  include ConfigGenUtils
   queue_as :default
 
   # Create a new archive on docmanager
-  def perform(archive_config_json, docmanager_url, index_name, archive)
+  def perform(archive_config_json, index_name, archive)
     # Create the config files needed to generate archive VM
     save_archive_service_configs(archive)
 
     # Create a new archive on docmanager
-    c = Curl::Easy.new("#{docmanager_url}/create_archive")
+    c = Curl::Easy.new("#{set_dm_path(archive)}/create_archive")
     c.http_post(Curl::PostField.content("archive_config_json", archive_config_json))
   end
 
@@ -18,11 +19,26 @@ class ArchiveCreatorJob < ApplicationJob
     create_pipeline_configs(archive_config_dir, archive)
   end
 
+  # Generate config file for IP addresses
+  def gen_ip_config_file(archive_config_dir, archive)
+    ip_config = {"ARCHIVE_GATEWAY_IP": archive[:archive_gateway_ip],
+                 "ARCHIVE_VM_IP": archive[:archive_vm_ip]}
+    config_path = "#{archive_config_dir}/ip_config.json"
+    File.write(config_path, JSON.pretty_generate(ip_config))
+  end
+
   # Generate config files with environment variables for each app in the pipeline
   def create_pipeline_configs(archive_config_dir, archive)
+    gen_ip_config_file(archive_config_dir, archive)
+    
     # Generate Docmanager config
     docmanager = { "DOCMANAGER_URL": archive[:docmanager_instance],
-                   "CATALYST_URL": archive[:catalyst_instance]}
+                   "CATALYST_URL": archive[:catalyst_instance],
+                   "SAVE_EXPORT_PATH": archive[:save_export_path],
+                   "SYNC_JSONDATA_PATH": archive[:sync_jsondata_path],
+                   "SYNC_RAWDOC_PATH": archive[:sync_rawdoc_path],
+                   "SYNC_CONFIG_PATH": archive[:sync_config_path]
+                   }
     gen_service_config(docmanager, archive_config_dir, "docmanager")
 
     # Generate LG config
@@ -46,7 +62,8 @@ class ArchiveCreatorJob < ApplicationJob
 
     # Generate OCR server config
     ocrserver = { "OCR_IN_PATH": archive[:ocr_in_path],
-                  "OCR_OUT_PATH": archive[:ocr_out_path] }
+                  "OCR_OUT_PATH": archive[:ocr_out_path],
+                  "PROJECT_INDEX": archive[:index_name] }
     gen_service_config(ocrserver, archive_config_dir, "ocrserver")
 
     # Generate IndexServer config
@@ -57,19 +74,5 @@ class ArchiveCreatorJob < ApplicationJob
     # Generate Catalyst config
     catalyst = { "DOCMANAGER_URL": archive[:docmanager_instance] }
     gen_service_config(catalyst, archive_config_dir, "catalyst")
-  end
-
-  # Generate a config file for a service with env vars
-  def gen_service_config(env_hash, archive_config_dir, service_name)
-    # Generate the config file
-    str = "[Service]\n"
-    env_hash.each do |env_var_name, value|
-      str += 'Environment="'+env_var_name.to_s+'='+value.to_s+'"'+"\n"
-    end
-
-    # Write env variables to a file
-    service_config_path = "#{archive_config_dir}/#{service_name}.service.d"
-    FileUtils.mkdir_p(service_config_path)
-    File.write("#{service_config_path}/#{service_name}.conf", str)
   end
 end

@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get 'unauthenticated', to:'archives#unauthenticated'
   resources :archives do
     get "give_user_access_form"
+    get "publish_archive_settings"
+    post "publish_archive"
     post "add_user_to_archive"
     post "remove_user_access"
   end

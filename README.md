@@ -20,14 +20,24 @@ Make sure you have nodejs installed
 4. Set the following env variables in `config/initializers/tt_instance_config.rb`
    * ARCHIVE_CONFIG_PATH: The path where archive config files should be saved
    * ARCHIVEADMIN_URL: The url where this application is accessible
+   * HOURS_TO_ARCHIVEVM_TIMEOUT: # of hours where unused archive vms should shutdown
+   * TESTMODE: Set to true if testing locally not with VM. Not needed in production.
+   * PREPUB_ARCHIVE_DOMAIN: Domain used for private archives
 
 
+<<<<<<< HEAD
 ## Run App
 
 Note: `DocManager` must be running
 
 1. Run Redis: `QUEUE=* rake environment resque:work`
 2. Start the app: `rails server -p 3002` 
+=======
+6. Run bundle exec crono RAILS_ENV=development
+(maybe with production instead of development)
+
+7. Start the app: rails server -p 3002 (Note: DocManager must be running)
+>>>>>>> 1f497245befd3e81f6db94279c0be409064c6c18
 
 
 ## Limitations
