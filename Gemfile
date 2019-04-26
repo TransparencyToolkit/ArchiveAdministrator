@@ -7,6 +7,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
 gem 'resque'
 gem 'curb'
+gem 'crono'
 
 # Authentication
 gem 'devise'

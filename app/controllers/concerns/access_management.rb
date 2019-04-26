@@ -13,4 +13,10 @@ module AccessManagement
     user.save
     cookies[:archive_auth_key] = "none"
   end
+
+  # Keep the last access date up to date so archive doesn't shut down
+  def update_last_access_date(archive)
+    archive.last_access_date = Time.now
+    archive.save
+  end
 end

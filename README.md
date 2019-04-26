@@ -22,10 +22,14 @@ the hosted archive service.
 
    * ARCHIVE_CONFIG_PATH: The path where archive config files should be saved
    * ARCHIVEADMIN_URL: The url where this application is accessible
+   * HOURS_TO_ARCHIVEVM_TIMEOUT: # of hours where unused archive vms should shutdown
 
 5. Run: QUEUE=* rake environment resque:work
 
-6. Start the app: rails server -p 3002 (Note: DocManager must be running)
+6. Run bundle exec crono RAILS_ENV=development
+(maybe with production instead of development)
+
+7. Start the app: rails server -p 3002 (Note: DocManager must be running)
 
 
 ## Limitations

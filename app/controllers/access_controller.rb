@@ -1,4 +1,6 @@
 class AccessController < ApplicationController
+  include AccessManagement
+  include ArchiveControlTouchFile
   skip_before_action :verify_authenticity_token
   
   def can_access_archive
@@ -10,6 +12,8 @@ class AccessController < ApplicationController
     if user && archive && archive.index_name == params["index_name"]
       # User has access
       if user.archives.map{|a| a.index_name}.include?(params["index_name"])
+        touch_start(archive)
+        update_last_access_date(archive)
         render json: {has_access: "yes"}
       # User exists but does not have access
       elsif !user.archives.map{|a| a.index_name}.include?(params["index_name"])

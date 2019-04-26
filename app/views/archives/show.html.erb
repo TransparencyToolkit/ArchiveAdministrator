@@ -45,4 +45,9 @@ Data Sources <%= @archive.data_sources %>
   
   <%= link_to 'Give User Access', archive_give_user_access_form_path(@archive) %>
   <br /><%= link_to 'Publish Archive', archive_publish_archive_settings_path(@archive) %>
+  <br />
+  <h4>Delete Archive</h4>
+  <%= link_to 'Delete Archive', archive_path(@archive), method: :delete %>
 <% end %>
+
+

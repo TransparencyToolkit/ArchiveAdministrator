@@ -1,4 +1,7 @@
 class ArchivesController < ApplicationController
+  include AccessManagement
+  include ArchiveControlTouchFile
+  
   def index
     # Get archives for the current user
     if current_user
@@ -30,9 +33,11 @@ class ArchivesController < ApplicationController
     @archive = Archive.find(params["archive_id"])
     last_export_date = get_last_export_date
 
-    # Set archive values based on input options
+    # Set archive values based on input options and ensure started
     @archive.last_export_date = Time.now
     @archive.save
+    update_last_access_date(@archive)
+    touch_start(@archive)
 
     # Call the publish archive create job
     ArchivePublishJob.perform_now(@archive, settings_by_type, last_export_date)
@@ -72,6 +77,8 @@ class ArchivesController < ApplicationController
     
     # Update the archive settings
     if params["archive"] && is_archive_admin?
+      update_last_access_date(@archive)
+      touch_start(@archive)
       @archive.update(params["archive"].permit(:human_readable_name,
                                                :public_archive_subdomain,
                                                :description,
@@ -79,6 +86,8 @@ class ArchivesController < ApplicationController
                                                :language,
                                                topbar_links: [:link_title, :link],
                                                info_dropdown_links: [:link_title, :link]).to_hash)
+      ArchiveUpdateJob.perform_now(gen_archive_config_json(@archive), @archive.docmanager_instance, @archive.index_name)
+      
       redirect_to @archive
     else
       render "edit"
@@ -152,6 +161,8 @@ class ArchivesController < ApplicationController
     ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), @archive.docmanager_instance, index_name, @archive)
     
     if @archive.save
+      update_last_access_date(@archive)
+      touch_start(@archive)
       redirect_to @archive
     else
       flash[:error] = "Subdomain chosen already in use. Please choose another."
@@ -169,6 +180,14 @@ class ArchivesController < ApplicationController
     respond_to do |format|
       format.html
     end
+  end
+
+  # Destroy the archive and archive VM
+  def destroy
+    @archive = Archive.find(params["id"].to_i)
+    touch_delete(@archive)
+    @archive.destroy
+    redirect_to root_path
   end
 
   private
