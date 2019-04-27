@@ -53,6 +53,41 @@
             </a>
             <hr>
 
+            <% if is_archive_admin? %>
+            <h3>Administrator Settings</h3>
+            <a href="<%= edit_archive_path(@archive) %>" class="btn btn-primary">
+                <i class="icon-edit"></i>
+                Edit Archive
+            </a>
+            <a href="<%= archive_publish_archive_settings_path(@archive) %>" class="btn btn-success">
+                <i class="icon-doc"></i>
+                Publish Archive
+            </a>
+            <h4>Delete Archive</h4>
+            <a href="<%= archive_path(@archive) %>" class="btn btn-danger">
+                <i class="icon-trash"></i>
+                Delete Archive
+            </a>
+
+            <h4>Users With Access</h4>
+            <ul class="list-unstyled">
+                <% @archive.users.each do |user| %>
+                <li>
+                    <i class="icon-user"></i>
+                    <%= user.username %> - <%= user.email %>
+                    <% if not_an_admin?(user) %>
+                    (<%= link_to 'Remove', archive_remove_user_access_path(@archive, user: user.username), method: 'post' %>)
+                    <% end %>
+                </li>
+                <% end %>
+            </ul>
+            <br />
+            <a href="<%= archive_give_user_access_form_path(@archive) %>" class="btn btn-primary">
+                <i class="icon-user"></i>
+                Give User Access
+            </a>
+            <% end %>
+
             <h4>Technical Details</h4>
             <p>
                 <strong class="label">Index Name</strong>
@@ -82,38 +117,6 @@
             <% } %>
             </pre>
             </p>
-
-            <% if is_archive_admin? %>
-            <h3>Administrator Settings</h3>
-            <a href="<%= edit_archive_path(@archive) %>" class="btn btn-primary">
-                <i class="icon-edit"></i>
-                Edit Archive
-            </a>
-            <a href="<%= archive_publish_archive_settings_path(@archive) %>" class="btn btn-success">
-                <i class="icon-doc"></i>
-                Publish Archive
-            </a>
-
-            <h4>Users With Access</h4>
-            <ul class="list-unstyled">
-                <% @archive.users.each do |user| %>
-                <li>
-                    <i class="icon-user"></i>
-                    <%= user.username %> - <%= user.email %>
-                    <% if not_an_admin?(user) %>
-                    (<%= link_to 'Remove', archive_remove_user_access_path(@archive, user: user.username), method: 'post' %>)
-                    <% end %>
-                </li>
-                <% end %>
-            </ul>
-            <br />
-
-            <a href="<%= archive_give_user_access_form_path(@archive) %>" class="btn btn-primary">
-                <i class="icon-user"></i>
-                Give User Access
-            </a>
-            <% end %>
-
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<% if @archives.nil? %>
+<% if !@archives.nil? %>
 <h1 class="pull-left">Your Archives</h1>
 <%= link_to "Create New Archive", new_archive_path, class: "btn btn-primary pull-right" %><br />
 <div class="clearfix"></div>
