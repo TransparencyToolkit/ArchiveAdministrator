@@ -9,9 +9,9 @@ module ConfigGenUtils
   end
 
   # Set the path to LG/docupload (with testmode)
-  def set_archive_url(index_name, service)
+  def set_archive_url(subdomain, service)
     if ENV['TESTMODE'] != "true"
-      return "#{ENV['PREPUB_ARCHIVE_DOMAIN']}/#{index_name}/#{service}"
+      return "#{ENV['PREPUB_ARCHIVE_DOMAIN']}/#{subdomain}/#{service}"
     else # Use localhost when testing
       if service == "lookingglass"
         return "http://localhost:3001"

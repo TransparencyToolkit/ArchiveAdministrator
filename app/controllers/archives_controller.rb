@@ -144,6 +144,7 @@ class ArchivesController < ApplicationController
   def create
     # Save the archive settings
     index_name = gen_index_name(params[:archive][:human_readable_name])
+    subdomain = params[:archive][:public_archive_subdomain]
     @archive = Archive.new({human_readable_name: params[:archive][:human_readable_name],
                             public_archive_subdomain: params[:archive][:public_archive_subdomain],
                             description: params[:archive][:description],
@@ -152,7 +153,7 @@ class ArchivesController < ApplicationController
                             topbar_links: format_hash_param(params[:archive][:topbar_links]),
                             info_dropdown_links: format_hash_param(params[:archive][:info_dropdown_links]),
                             index_name: index_name,
-                            data_sources: get_default_data_sources}.merge(set_default_pipeline_urls(index_name)))
+                            data_sources: get_default_data_sources}.merge(set_default_pipeline_urls(subdomain)))
     
     # Associate archive with the appropriate user
     @archive.users << User.find(current_user.id)
@@ -233,14 +234,14 @@ class ArchivesController < ApplicationController
   end
 
   # Set the URLS for the other parts of the pipeline
-  def set_default_pipeline_urls(index_name)
+  def set_default_pipeline_urls(subdomain)
     archive_gateway_ip, archive_vm_ip = set_archive_ip
     return {
       archive_gateway_ip: archive_gateway_ip,
       archive_vm_ip: archive_vm_ip,
-      uploadform_instance: set_archive_url(index_name, "upload"),
+      uploadform_instance: set_archive_url(subdomain, "upload"),
       docmanager_instance: "http://0.0.0.0:3000",
-      lookingglass_instance: set_archive_url(index_name, "lookingglass"),
+      lookingglass_instance: set_archive_url(subdomain, "lookingglass"),
       catalyst_instance: "http://localhost:9004",
       ocr_in_path: "/home/tt/ocr_in",
       ocr_out_path: "/home/tt/ocr_out",
