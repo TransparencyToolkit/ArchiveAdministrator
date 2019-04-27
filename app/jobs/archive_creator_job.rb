@@ -22,7 +22,8 @@ class ArchiveCreatorJob < ApplicationJob
   # Generate config file for IP addresses
   def gen_ip_config_file(archive_config_dir, archive)
     ip_config = {"ARCHIVE_GATEWAY_IP": archive[:archive_gateway_ip],
-                 "ARCHIVE_VM_IP": archive[:archive_vm_ip]}
+                 "ARCHIVE_VM_IP": archive[:archive_vm_ip],
+                 "SUBDOMAIN": archive[:public_archive_subdomain]}
     config_path = "#{archive_config_dir}/ip_config.json"
     File.write(config_path, JSON.pretty_generate(ip_config))
   end
