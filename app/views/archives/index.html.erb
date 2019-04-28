@@ -1,18 +1,32 @@
-<% if !@archives.nil? %>
+<% if @archives.length > 0 %>
 <h1 class="pull-left">Your Archives</h1>
-<%= link_to "Create New Archive", new_archive_path, class: "btn btn-primary pull-right" %><br />
+<a href="<%= new_archive_path %>" class="btn btn-primary more-top pull-right">
+    <i class="icon-plus"></i>
+    Create New Archive
+</a>
 <div class="clearfix"></div>
 <div class="white-section">
     <ul class="list-unstyled">
         <% @archives.each do |archive| %>
         <li>
-            <h3><%= link_to archive.human_readable_name, archive_path(archive) %></h3>
-            <a href="<%= archive.uploadform_instance %>/upload/<%= archive.index_name %>" class="btn btn-primary">
-                Upload Documents
-            </a>
-            <a href="<%= archive.lookingglass_instance %>" class="btn btn-primary">
-                View on LookingGlass
-            </a>
+            <div class="row">
+                <div class="col-md-6">
+                <a href="<%= archive_path(archive) %>">
+                    <h3><%= archive.human_readable_name %></h3>
+                </a>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a href="<%= archive.uploadform_instance %>/upload/<%= archive.index_name %>" class="btn btn-sm btn-primary">
+                        <i class="icon-upload"></i>
+                        Upload Documents
+                    </a>
+                    <a href="<%= archive.lookingglass_instance %>" class="btn btn-sm btn-primary">
+                        <i class="icon-logo"></i>
+                        View on LookingGlass
+                    </a>
+                </div>
+            </div>
+            <hr>
         </li>
         <% end %>
     </ul>

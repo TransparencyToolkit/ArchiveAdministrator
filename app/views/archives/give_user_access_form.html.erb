@@ -1,6 +1,19 @@
-<%= form_with url: archive_add_user_to_archive_path, local: true do |f| %>
-   <%= f.hidden_field :archive_id, value: @archive.id %>
-   <%= f.label :user_to_add %>
-   <%= f.text_field :user_to_add %>
-   <%= f.submit "Give User Access to Archive" %>
-<% end %>  
+<h1>Give User Access</h1>
+<div class="white-section">
+    <%= form_with url: archive_add_user_to_archive_path, local: true do |f| %>
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.hidden_field :archive_id, value: @archive.id %>
+            <%= f.label :username_to_add %>
+            <%= f.text_field :user_to_add, class: "form-control" %>
+        </div>
+        <div class="col-md-5">
+            <label>&nbsp;</label>
+            <button type="submit" name="commit" class="btn btn-primary">
+                <i class="icon-plus"></i>
+                Grant Access
+            </button>
+        </div>
+    </div>
+    <% end %>
+</div>
