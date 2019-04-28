@@ -27,7 +27,9 @@
             </div>
             <div class="form-group">
                 <%= f.label :language %>
-                <%= f.select :language, JSON.parse(File.read("app/views/archives/json_select_lists/language_list.json")), {}, class: "form-control" %>
+                <%= f.select :language,
+                JSON.parse(File.read("app/views/archives/json_select_lists/language_list.json")),
+                {selected: "English"}, class: "form-control" %>
             </div>
         </div>
         <div class="col-md-6">
