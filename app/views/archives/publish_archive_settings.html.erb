@@ -1,36 +1,71 @@
-NOTE: On this page, the following changes should be made UI-wise:
-<ol>
-  <li>Generally clean up form styling</li>
-  <li>Hide list of fields to include for publication unless corresponding data source selected</li>
-  <li>Hide list of to_publish facet values unless corresponding field selected from dropdown</li>
-</ol>
+<h1>Publish Archive</h1>
+<div class="white-section">
 
-<%= form_with url: archive_publish_archive_path, local: true do |f| %>
-<%= f.hidden_field :archive_id, value: @archive.id %>
+    <%= form_with url: archive_publish_archive_path, local: true do |f| %>
+    <%= f.hidden_field :archive_id, value: @archive.id %>
 
-<!-- Show fields that can be published for each data source -->
-<h3>Choose which data sources should be published</h3>
-<% @dataspec["datasources"].each do |datasource| %><br /><br /><hr>
-  <%= f.label "Publish #{datasource['name']}?".to_sym %>
-  <%= f.check_box "publish_#{datasource['class_name']}" %><br />
+    <h2>Choose Data Sources</h2>
+    <p>Choose which types of documents and which part of those documents should be published or hidden.</p>
+    <hr>
 
-  <h4>Which field should be used to determine which documents to publish?</h4>
-  <%= f.label :publication_filter_field %>
-  <%= f.select("filterfield_#{datasource['class_name']}", list_category_fields(datasource), include_blank: true) %>
-      
-  <!-- List all items in array in collection check boxes -->
-  <ul>
-    <% list_category_fields_machine_readable(datasource).each do |field_to_check| %>
-      <%= f.collection_check_boxes(datasource['class_name']+"_filtervals", @facets[field_to_check].to_a, :to_s, :to_s) %>
+    <% @dataspec["datasources"].each do |datasource| %>
+    <h3 class="pull-left"><%= datasource['name'] %></h3>
+
+    <label class="switch pull-right">
+        <input type="checkbox" id="publish_<%= datasource['class_name'] %>" class="switch-datasource" value="1" checked>
+        <span class="slider round"></span>
+    </label>
+    <div class="clearfix"></div>
+
+    <div id="settings_publish_<%= datasource['class_name'] %>" class="hidden">
+        <h4>1. Determine Documents</h4>
+        <p>Select fields which will be used to determine which documents to publish.</p>
+
+        <%= f.label :publication_filter_field %>
+        <%= f.select("filterfield_#{datasource['class_name']}", list_category_fields(datasource), {}, {include_blank: true, class: 'choose-publication-filter'}) %>
+
+        <br>
+
+        <!-- List all items in array in collection check boxes -->
+<% if list_category_fields_machine_readable(datasource) %>
+<% list_category_fields_machine_readable(datasource).each do |field_to_check| %>
+<ul id="list-<%= field_to_check  %>" class="list-gray-boxes list-publication-filters add-top more-bottom hidden">
+    <%= f.collection_check_boxes datasource['class_name'] + "_filtervals", @facets[field_to_check].to_a, :to_s, :to_s do |b| %>
+    <li>
+        <%= b.check_box %>
+        <%= b.label %>
+    </li>
     <% end %>
-  </ul>
+</ul>
+<% end %>
+<% else %>
+Yolo
+<% end %>
+        <h4>2. Choose Fields</h4>
+        <p>
+            Choose which fields from a document or entity that should be included publicly.
+        </p>
 
-  <h4>Which fields should be included for publication?</h4>
-  <!-- Choose which fields should be published for each data source -->
-  <%= f.collection_check_boxes(datasource['class_name']+"_include", remap_field_info(datasource), :first, :last) %>
-  
-<% end %><br />
-   <%= f.submit "Publish Archive" %>
-<% end %>  
+<ul class="list-gray-boxes">
+<%= f.collection_check_boxes datasource['class_name'] + "_include", remap_field_info(datasource), :first, :last do |b| %>
+    <li>
+        <%= b.check_box %>
+        <%= b.label %>
+    </li>
+<% end %>
+</ul>
 
+    </div>
+    <hr>
+    <% end %>
 
+    <div class="text-right">
+        <button type="submit" name="commit" class="btn btn-primary" value="Publish Archive" data-disable-with="Publish Archive">
+            <i class="icon-document"></i>
+            Publish Archive
+        </button>
+    </div>
+
+    <% end %>
+
+</div>
