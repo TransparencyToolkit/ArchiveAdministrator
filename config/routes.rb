@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   get 'not_allowed', to:'archives#not_allowed'
   get 'unauthenticated', to:'archives#unauthenticated'
 
-
   authenticate :user do
     resources :archives do
       get "give_user_access_form"
