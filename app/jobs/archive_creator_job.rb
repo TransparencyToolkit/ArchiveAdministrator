@@ -59,7 +59,7 @@ class ArchiveCreatorJob < ApplicationJob
                      "ARCHIVEADMIN_URL": ENV['ARCHIVEADMIN_URL'],
                      "WRITEABLE": "true",
                      "PROJECT_INDEX": archive[:index_name],
-                     "RAILS_RELATIVE_ROOT_URL": "/#{archive[:public_archive_subdomain]}/lookingglass/",
+                     "RAILS_RELATIVE_URL_ROOT": "/#{archive[:public_archive_subdomain]}/lookingglass/",
                      "ARCHIVE_SECRET_KEY": archive[:archive_key] }
     gen_service_config(lookingglass, archive_config_dir, "lookingglass")
 
