@@ -14,7 +14,7 @@ class ArchiveCreatorJob < ApplicationJob
   # Create a new archive on DocManager
   def send_archive_config_to_dm(archive_config_json, archive)
     begin
-      sleep(5)
+      sleep(1)
       c = Curl::Easy.new("#{set_dm_path(archive)}/create_archive")
       c.http_post(Curl::PostField.content("archive_config_json", archive_config_json))
     rescue
