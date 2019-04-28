@@ -60,12 +60,14 @@ class ArchiveCreatorJob < ApplicationJob
                      "WRITEABLE": "true",
                      "PROJECT_INDEX": archive[:index_name],
                      "RAILS_RELATIVE_URL_ROOT": "/#{archive[:public_archive_subdomain]}/lookingglass/",
+                     "PUBLIC_ARCHIVEADMIN_URL": ENV['PREPUB_ARCHIVE_DOMAIN'],
                      "ARCHIVE_SECRET_KEY": archive[:archive_key] }
     gen_service_config(lookingglass, archive_config_dir, "lookingglass")
 
     # Generate DocUpload config
     docupload = { "LOOKINGGLASS_URL": archive[:lookingglass_instance],
                   "ARCHIVEADMIN_URL": ENV['ARCHIVEADMIN_URL'],
+                  "PUBLIC_ARCHIVEADMIN_URL": ENV['PREPUB_ARCHIVE_DOMAIN'],
                   "OCR_IN_PATH": archive[:ocr_in_path],
                   "OCR_OUT_PATH": archive[:ocr_out_path],
                   "PROJECT_INDEX": archive[:index_name],
