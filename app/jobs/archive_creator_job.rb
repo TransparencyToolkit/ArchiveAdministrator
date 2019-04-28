@@ -8,8 +8,18 @@ class ArchiveCreatorJob < ApplicationJob
     save_archive_service_configs(archive)
 
     # Create a new archive on docmanager
-    c = Curl::Easy.new("#{set_dm_path(archive)}/create_archive")
-    c.http_post(Curl::PostField.content("archive_config_json", archive_config_json))
+    send_archive_config_to_dm(archive_config_json, archive)
+  end
+
+  # Create a new archive on DocManager
+  def send_archive_config_to_dm(archive_config_json, archive)
+    begin
+      sleep(5)
+      c = Curl::Easy.new("#{set_dm_path(archive)}/create_archive")
+      c.http_post(Curl::PostField.content("archive_config_json", archive_config_json))
+    rescue
+      send_archive_config_to_dm(archive_config_json, archive)
+    end
   end
 
   # Generate config file for archive
