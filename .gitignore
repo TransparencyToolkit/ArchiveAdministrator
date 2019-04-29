@@ -27,3 +27,7 @@
 /config/master.key
 
 /config/initializers/test_mode.rb
+
+# IDEs
+*.swp
+*.swo

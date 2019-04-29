@@ -5240,6 +5240,7 @@ div.white-section h4 {
     margin-top: 0px;
 }
 
+div.white-section label,
 div.white-section .label {
   display: block;
   font-size: 12px;

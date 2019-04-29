@@ -2,7 +2,7 @@ class ArchivesController < ApplicationController
   include AccessManagement
   include ArchiveControlTouchFile
   include ConfigGenUtils
-  
+
   def index
     # Get archives for the current user
     if current_user
@@ -23,7 +23,7 @@ class ArchivesController < ApplicationController
     # Get the facets and values in array
     http_facets = Curl.get("#{set_dm_path(@archive)}/get_docs_on_index_page", {start: 0, index_name: @archive.index_name})
     @facets = JSON.parse(http_facets.body_str)["aggregations"].map{|f| [f[0], f[1]["buckets"].map{|v| v["key"]}]}.to_h
-    
+
     render "publish_archive_settings"
   end
 
@@ -103,7 +103,7 @@ class ArchivesController < ApplicationController
     if is_archive_admin?
       user_to_add = User.find_by(username: params["user_to_add"])
       @archive.users << user_to_add if !@archive.users.include?(user_to_add)
-      redirect_to archive_path(@archive)
+      redirect_to archive_path(@archive) + "/give_user_access_form"
     else
       render "not_allowed"
     end
@@ -115,7 +115,7 @@ class ArchivesController < ApplicationController
     if is_archive_admin?
       user_to_remove = User.find_by(username: params["user"])
       @archive.users.delete(user_to_remove)
-      redirect_to @archive
+      redirect_to archive_path(@archive) + "/give_user_access_form"
     else
       render "not_allowed"
     end

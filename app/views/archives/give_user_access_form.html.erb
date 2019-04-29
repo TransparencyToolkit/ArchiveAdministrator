@@ -1,11 +1,15 @@
-<h1>Give User Access</h1>
+<h1>User Access</h1>
 <div class="white-section">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <p>
                 <strong class="label">Archive Name</strong>
                 <span class="name"><%= @archive.human_readable_name %></span>
             </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
             <%= form_with url: archive_add_user_to_archive_path, local: true do |f| %>
             <div class="row">
                 <div class="col-md-8">
