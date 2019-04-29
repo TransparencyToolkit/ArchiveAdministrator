@@ -1,19 +1,52 @@
 <h1>Give User Access</h1>
 <div class="white-section">
-    <%= form_with url: archive_add_user_to_archive_path, local: true do |f| %>
     <div class="row">
-        <div class="col-md-6">
-            <%= f.hidden_field :archive_id, value: @archive.id %>
-            <%= f.label :username_to_add %>
-            <%= f.text_field :user_to_add, class: "form-control" %>
+        <div class="col-md-8">
+            <p>
+                <strong class="label">Archive Name</strong>
+                <span class="name"><%= @archive.human_readable_name %></span>
+            </p>
+            <%= form_with url: archive_add_user_to_archive_path, local: true do |f| %>
+            <div class="row">
+                <div class="col-md-8">
+                    <%= f.hidden_field :archive_id, value: @archive.id %>
+                    <%= f.label :username_to_add, class: "label" %>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="icon-user"></i>
+                        </div>
+                        <%= f.text_field :user_to_add, class: "form-control" %>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <strong class="label">&nbsp;</strong>
+                    <button type="submit" name="commit" class="btn btn-primary btn-block">
+                        <i class="icon-plus"></i>
+                        Grant Access
+                    </button>
+                </div>
+            </div>
+            <% end %>
         </div>
-        <div class="col-md-5">
-            <label>&nbsp;</label>
-            <button type="submit" name="commit" class="btn btn-primary">
-                <i class="icon-plus"></i>
-                Grant Access
-            </button>
+        <div class="col-md-4">
+            <p>
+                <strong class="label">Users With Access</strong>
+            </p>
+            <ul class="list-gray-boxes">
+                <% @archive.users.each do |user| %>
+                <li class="block">
+                    <i class="icon-user"></i> <strong><%= user.username %></strong>
+                    <% if not_an_admin?(user) %>
+                    <a class="text-danger pull-right" href="<%= archive_remove_user_access_path(@archive, user: user.username) %>" rel="nofollow" data-method="post">
+                        <i class="icon-circle-x"></i>
+                        Remove
+                    </a>
+                    <% else %>
+                    <em class="pull-right">You</em>
+                    <% end %>
+                </li>
+                <% end %>
+            </ul>
         </div>
     </div>
-    <% end %>
 </div>

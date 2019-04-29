@@ -47,16 +47,16 @@
         </div>
         <div class="col-md-3">
 
-            <h4>Actions</h4>
+            <strong class="label">Actions</strong>
             <ul class="list-full-buttons more-bottom">
                 <li>
-                    <a href="<%= @archive.uploadform_instance %>" class="btn btn-primary btn-block">
+                    <a href="<%= @archive.uploadform_instance %>/upload/<%= @archive.index_name %>" class="btn btn-link">
                         <i class="icon-upload"></i>
                         Upload Documents
                     </a>
                 </li>
                 <li>
-                    <a href="<%= @archive.lookingglass_instance %>" class="btn btn-primary btn-block">
+                    <a href="<%= @archive.lookingglass_instance %>" class="btn btn-link">
                         <i class="icon-logo"></i>
                         View on LookingGlass
                     </a>
@@ -75,6 +75,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="<%= archive_give_user_access_form_path(@archive) %>" class="btn btn-info btn-block">
+                        <i class="icon-user"></i>
+                        Give User Access
+                    </a>
+                </li>
+                <li>
                     <a href="<%= archive_publish_archive_settings_path(@archive) %>" class="btn btn-success btn-block">
                         <i class="icon-document"></i>
                         Publish Archive
@@ -87,29 +93,7 @@
                     </a>
                 </li>
             </ul>
-
-            <h4>Users With Access</h4>
-            <ul class="list-gray-boxes">
-                <% @archive.users.each do |user| %>
-                <li>
-                    <i class="icon-user"></i> <strong><%= user.username %></strong>
-                    <% if not_an_admin?(user) %>
-                    <a class="text-danger pull-right" href="<%= archive_remove_user_access_path(@archive, user: user.username) %>" rel="nofollow" data-method="post">
-                        <i class="icon-circle-x"></i>
-                        Remove
-                    </a>
-                    <% else %>
-                    <em class="pull-right">You</em>
-                    <% end %>
-                </li>
-                <% end %>
-            </ul>
-            <a href="<%= archive_give_user_access_form_path(@archive) %>" class="btn btn-primary btn-block">
-                <i class="icon-plus"></i>
-                Give User Access
-            </a>
             <% end %>
-
         </div>
     </div>
 

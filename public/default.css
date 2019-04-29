@@ -5295,11 +5295,13 @@ ul.list-gray-boxes li a:hover {
     text-decoration: none;
 }
 
+ul.list-gray-boxes li.block {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+}
 
 
-
-
-/* The switch - the box around the slider */
 .switch {
     position: relative;
     display: inline-block;

@@ -13,6 +13,6 @@ Rails.application.routes.draw do
       post "remove_user_access"
     end
   end
-  
+
   root to: 'archives#index'
 end
