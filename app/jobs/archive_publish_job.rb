@@ -13,7 +13,7 @@ class ArchivePublishJob < ApplicationJob
   # Export the configs from DocManager
   def export_configs_from_dm(archive, doc_type, type_values)
     begin
-      c = Curl.get("#{archive['docmanager_instance']}/export_to_public",
+      c = Curl.get("#{set_dm_path(archive)}/export_to_public",
                    {date_changed_since: last_export_date,
                     pub_selector_field: type_values[:publish_selector_field],
                     acceptable_to_publish_values: JSON.pretty_generate(type_values[:facet_vals_to_publish]),
