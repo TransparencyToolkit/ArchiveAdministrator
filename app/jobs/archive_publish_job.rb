@@ -6,13 +6,23 @@ class ArchivePublishJob < ApplicationJob
   def perform(archive, settings_by_type, last_export_date)
     save_public_archive_service_configs(archive)
     settings_by_type.each do |doc_type, type_values|
+      export_configs_from_dm(archive, doc_type, type_values)
+    end
+  end
+
+  # Export the configs from DocManager
+  def export_configs_from_dm(archive, doc_type, type_values)
+    begin
       c = Curl.get("#{archive['docmanager_instance']}/export_to_public",
                    {date_changed_since: last_export_date,
                     pub_selector_field: type_values[:publish_selector_field],
                     acceptable_to_publish_values: JSON.pretty_generate(type_values[:facet_vals_to_publish]),
                     fields_to_include_in_export: JSON.pretty_generate(type_values[:fields_to_include]),
                     index_name: archive.index_name,
-                    doc_type: doc_type})    
+                    doc_type: doc_type})
+    rescue # Retry if it fails (for example, if DM hasn't started yet)
+      sleep(5)
+      export_configs_from_dm(archive, doc_type, type_values)
     end
   end
   
