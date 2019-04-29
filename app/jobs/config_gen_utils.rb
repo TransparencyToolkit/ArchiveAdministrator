@@ -2,7 +2,7 @@ module ConfigGenUtils
   # Set path to DM (with test mode)
   def set_dm_path(archive)
     if ENV['TESTMODE'] != "true"
-      return archive.archive_vm_ip+":3000"
+      return "http://"+archive.archive_vm_ip+":3000"
     else
       return "http://0.0.0.0:3000"
     end
