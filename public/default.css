@@ -5232,6 +5232,7 @@ div.search-item {
 div.white-section {
   background: #FFF;
   margin-top: 30px;
+  margin-bottom: 45px;
   padding: 25px 25px 15px 25px;
 }
 
@@ -5248,6 +5249,7 @@ div.white-section .label {
   text-transform: uppercase;
   color: #8F8F8F;
 }
+
 
 div.white-section .name {
   font-size: 24px;
@@ -5292,9 +5294,22 @@ ul.list-gray-boxes li {
     padding: 5px 10px;
 }
 
+ul.list-gray-boxes li:hover {
+    background: #d6d6d6;
+}
+
 ul.list-gray-boxes li a:hover {
     text-decoration: none;
 }
+
+ul.list-gray-boxes li label {
+    display: inline-block;
+    font-weight: normal;
+    text-transform: capitalize;
+    color: #000000;
+    cursor: pointer;
+}
+
 
 ul.list-gray-boxes li.block {
     width: 100%;
