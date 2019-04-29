@@ -278,7 +278,17 @@ class ArchivesController < ApplicationController
   # Generate the index name
   def gen_index_name(human_readable)
     index_valid = human_readable.downcase.gsub(" ", "_").gsub("'", "")
-    return index_valid+"_"+SecureRandom.urlsafe_base64(4).downcase.gsub("-", "")
+    return index_valid+"_"+gen_rand_str
+  end
+
+  # Generate a random string without a number at start
+  def gen_rand_str
+    str = SecureRandom.alphanumeric(6).downcase
+    if (str[0] =~ /[A-Za-z]/) == 0
+      return str
+    else
+      gen_rand_str
+    end
   end
 
   # Changes the format of a hash param from that passed in the form
