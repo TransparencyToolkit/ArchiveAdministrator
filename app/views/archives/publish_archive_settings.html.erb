@@ -1,47 +1,67 @@
 <h1>Publish Archive</h1>
 <div class="white-section">
 
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                <strong class="label">Archive Name</strong>
+                <span class="name"><%= @archive.human_readable_name %></span>
+            </p>
+        </div>
+    </div>
+
     <%= form_with url: archive_publish_archive_path, local: true do |f| %>
     <%= f.hidden_field :archive_id, value: @archive.id %>
 
-    <h2>Choose Data Sources</h2>
-    <p>Choose which types of documents and which part of those documents should be published or hidden.</p>
+    <strong class="label">Select Data Sources</strong>
+    <p>Choose the types of document and which parts of those documents should be published publicly or hidden.</p>
     <hr>
 
     <% @dataspec["datasources"].each do |datasource| %>
-    <h3 class="pull-left"><%= datasource['name'] %></h3>
+    <h3 class="pull-left">
+        <% if datasource['icon'] %>
+        <i class="<%= datasource['icon'] %>"></i>
+        <% else %><i class="icon-document"></i><% end %>
+        <%= datasource['name'] %>
+    </h3>
 
     <label class="switch pull-right">
-        <input type="checkbox" id="publish_<%= datasource['class_name'] %>" class="switch-datasource" value="1" checked>
+        <input type="checkbox" id="publish_<%= datasource['class_name'] %>" class="switch-datasource" value="0">
         <span class="slider round"></span>
     </label>
     <div class="clearfix"></div>
 
     <div id="settings_publish_<%= datasource['class_name'] %>" class="hidden">
-        <h4>1. Determine Documents</h4>
+        <h4>Determine Documents</h4>
         <p>Select fields which will be used to determine which documents to publish.</p>
 
         <%= f.label :publication_filter_field %>
-        <%= f.select("filterfield_#{datasource['class_name']}", list_category_fields(datasource), {}, {include_blank: true, class: 'choose-publication-filter'}) %>
+        <%= f.select("filterfield_#{datasource['class_name']}", list_category_fields(datasource), {}, {
+            include_blank: true,
+            class: 'choose-publication-filter form-control'
+        }) %>
 
         <br>
 
         <!-- List all items in array in collection check boxes -->
-<% if list_category_fields_machine_readable(datasource) %>
-<% list_category_fields_machine_readable(datasource).each do |field_to_check| %>
-<ul id="list-<%= field_to_check  %>" class="list-gray-boxes list-publication-filters add-top more-bottom hidden">
-    <%= f.collection_check_boxes datasource['class_name'] + "_filtervals", @facets[field_to_check].to_a, :to_s, :to_s do |b| %>
-    <li>
-        <%= b.check_box %>
-        <%= b.label %>
-    </li>
-    <% end %>
-</ul>
-<% end %>
-<% else %>
-Yolo
-<% end %>
-        <h4>2. Choose Fields</h4>
+        <% list_category_fields_machine_readable(datasource).each do |field_to_check| %>
+        <% if @facets[field_to_check].length > 0 %>
+        <ul id="list-<%= datasource['class_name'] + "-" + field_to_check  %>" class="list-gray-boxes list-publication-filters add-top more-bottom hidden">
+            <%= f.collection_check_boxes datasource['class_name'] + "_filtervals", @facets[field_to_check].to_a, :to_s, :to_s do |b| %>
+            <li>
+                <%= b.check_box %>
+                <%= b.label %>
+            </li>
+            <% end %>
+        </ul>
+        <% else %>
+        <p id="list-<%= datasource['class_name'] + "-" + field_to_check %>" class="more-bottom hidden">
+            <em>No items to select</em>
+        </p>
+        <% end %>
+        <% end %>
+
+        <h4>Choose Fields</h4>
         <p>
             Choose which fields from a document or entity that should be included publicly.
         </p>
