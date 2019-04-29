@@ -71,6 +71,7 @@ class ArchiveCreatorJob < ApplicationJob
                   "OCR_IN_PATH": archive[:ocr_in_path],
                   "OCR_OUT_PATH": archive[:ocr_out_path],
                   "PROJECT_INDEX": archive[:index_name],
+                  "RAILS_RELATIVE_URL_ROOT": "/#{archive[:public_archive_subdomain]}/upload/",
                   "ARCHIVE_SECRET_KEY": archive[:archive_key] }
     gen_service_config(docupload, archive_config_dir, "docupload")
 
