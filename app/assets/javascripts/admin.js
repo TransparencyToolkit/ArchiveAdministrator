@@ -9,19 +9,23 @@ $(document).ready(function() {
             $('#settings_' + id).addClass('hidden')
             $(this).val(0)
         }
-        console.log('set ' + id  + ' to: ' + $(this).val())
     })
 
     $('.choose-publication-filter').each(function() {
         var id = $(this).attr('id').replace('filterfield_', '')
-        console.log('Show checkboxes: ' + id + '-' + $(this).val() )
-        $('#list-' + id + '-' + $(this).val()).removeClass('hidden')
+        var item = '#list-' + id + '-' + $(this).val()
+        $(item).removeClass('hidden')
     })
 
     $('.choose-publication-filter').on('change', function() {
-        console.log('choose-publication-filter: list-' + $(this).val())
+        var item = '#list-' + $(this).attr('id').replace('filterfield_', '') + '-' + $(this).val()
         $('.list-publication-filters').addClass('hidden')
-        $('#list-' + $(this).attr('id') + '-' + $(this).val()).removeClass('hidden')
+        $(item).removeClass('hidden')
+        var none_em = $(item).find('em')
+        if (none_em.length > 0) {
+            var name = $(this).find('option:selected').text()
+            $(none_em).html('"' + name  + '" has no items')
+        }
     })
 
 })
