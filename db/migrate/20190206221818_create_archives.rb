@@ -18,8 +18,6 @@ class CreateArchives < ActiveRecord::Migration[5.2]
       t.string :theme
 
       # Applications in pipeline
-      t.string :archive_gateway_ip
-      t.string :archive_vm_ip
       t.string :lookingglass_instance
       t.string :uploadform_instance
       t.string :docmanager_instance
@@ -33,7 +31,13 @@ class CreateArchives < ActiveRecord::Migration[5.2]
       t.string :archive_key
       t.datetime :last_access_date
 
+      # VM setup
+      t.string :archive_gateway_ip
+      t.string :archive_vm_ip
+     
       # Public archive settings
+      t.string :public_gateway_ip
+      t.string :public_vm_ip
       t.string :public_archive_subdomain
       t.string :public_archive_path
       t.datetime :last_export_date

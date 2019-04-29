@@ -18,9 +18,19 @@ class ArchivePublishJob < ApplicationJob
   
   # Generate config files for public archive
   def save_public_archive_service_configs(archive)
-    archive_config_dir = ENV["ARCHIVE_CONFIG_PATH"]+"/"+archive.index_name+"_publicconfig"
+    archive_config_dir = ENV["ARCHIVE_CONFIG_PATH"]+"/"+archive.index_name+"/public"
     FileUtils.mkdir_p(archive_config_dir)
     create_pipeline_configs(archive_config_dir, archive)
+  end
+
+  # Generate config file for IP addresses
+  def gen_ip_config_file(archive_config_dir, archive)
+    ip_config = {"PUBLIC_GATEWAY_IP": archive[:public_gateway_ip],
+                 "PUBLIC_VM_IP": archive[:public_vm_ip],
+                 "SUBDOMAIN": archive[:public_archive_subdomain],
+                 "TYPE": "publicvm" }
+    config_path = "#{archive_config_dir}/ip_config.json"
+    File.write(config_path, JSON.pretty_generate(ip_config))
   end
 
   # Generate config file with environment variables for each app in the pipeline
@@ -32,12 +42,16 @@ class ArchivePublishJob < ApplicationJob
     # Generate LG config
     lookingglass = { "DOCMANAGER_URL": archive[:docmanager_instance],
                      "WRITEABLE": "false",
-                     "PROJECT_INDEX": archive[:index_name] }
+                     "PROJECT_INDEX": archive[:index_name],
+                     "RAILS_RELATIVE_URL_ROOT": "/"}
     gen_service_config(lookingglass, archive_config_dir, "lookingglass")
 
     # Generate IndexServer config
     indexserver = { "OCR_OUT_PATH": archive[:ocr_out_path],
                     "DOCMANAGER_URL": archive[:docmanager_instance] }
     gen_service_config(indexserver, archive_config_dir, "indexserver")
+
+    # Generate IP config for public instance
+    gen_ip_config_file(archive_config_dir, archive)
   end
 end

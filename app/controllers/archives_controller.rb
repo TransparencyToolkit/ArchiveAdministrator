@@ -39,7 +39,7 @@ class ArchivesController < ApplicationController
     @archive.save
     update_last_access_date(@archive)
     touch_start(@archive)
-
+    
     # Call the publish archive create job
     ArchivePublishJob.perform_now(@archive, settings_by_type, last_export_date)
     flash[:success] = "Your archive is being published. It may take some time for the data to transfer to the public instance."
@@ -235,10 +235,12 @@ class ArchivesController < ApplicationController
 
   # Set the URLS for the other parts of the pipeline
   def set_default_pipeline_urls(subdomain)
-    archive_gateway_ip, archive_vm_ip = set_archive_ip
+    ips = set_archive_ip
     return {
-      archive_gateway_ip: archive_gateway_ip,
-      archive_vm_ip: archive_vm_ip,
+      archive_gateway_ip: ips[:archive_gateway_ip],
+      archive_vm_ip: ips[:archive_vm_ip],
+      public_gateway_ip: ips[:public_gateway_ip],
+      public_vm_ip: ips[:public_vm_ip],
       uploadform_instance: set_archive_url(subdomain, "upload"),
       docmanager_instance: "http://0.0.0.0:3000",
       lookingglass_instance: set_archive_url(subdomain, "lookingglass"),
@@ -246,9 +248,9 @@ class ArchivesController < ApplicationController
       ocr_in_path: "/home/tt/ocr_in",
       ocr_out_path: "/home/tt/ocr_out",
       save_export_path: "/home/tt/export_out",
-      sync_jsondata_path: "http://localhost:3003:/home/tt/ocr_out/ocred_docs",
-      sync_rawdoc_path: "http://localhost:3003:/home/tt/ocr_out/raw_docs",
-      sync_config_path: "http://localhost:3003:/home/tt/Ansible/DocManager/dataspec_files",
+      sync_jsondata_path: "#{ips[:public_vm_ip]}:/home/tt/ocr_out/ocred_docs",
+      sync_rawdoc_path: "#{ips[:public_vm_ip]}:/home/tt/ocr_out/raw_docs",
+      sync_config_path: "#{ips[:public_vm_ip]}:/tt-ansible/DocManager/dataspec_files",
       archive_key: SecureRandom.base64(100)
     }
   end
@@ -265,7 +267,11 @@ class ArchivesController < ApplicationController
     if Archive.find_by(archive_gateway_ip: ip_base+"1")
       set_archive_ip
     else
-      return ip_base+"1", ip_base+"2"
+      return { archive_gateway_ip: ip_base+"1",
+               archive_vm_ip: ip_base+"2",
+               public_gateway_ip: ip_base+"3",
+               public_vm_ip: ip_base+"4"
+      }
     end
   end
 
