@@ -24,9 +24,8 @@
         <% else %><i class="icon-document"></i><% end %>
         <%= datasource['name'] %>
     </h3>
-
     <label class="switch pull-right">
-        <input type="checkbox" id="publish_<%= datasource['class_name'] %>" class="switch-datasource" value="0">
+        <input type="checkbox" name="publish_<%= datasource['class_name'] %>" id="publish_<%= datasource['class_name'] %>" class="switch-datasource" value="0">
         <span class="slider round"></span>
     </label>
     <div class="clearfix"></div>
@@ -40,7 +39,6 @@
             include_blank: true,
             class: 'choose-publication-filter form-control'
         }) %>
-
         <br>
 
         <!-- List all items in array in collection check boxes -->
@@ -66,14 +64,14 @@
             Choose which fields from a document or entity that should be included publicly.
         </p>
 
-<ul class="list-gray-boxes">
-<%= f.collection_check_boxes datasource['class_name'] + "_include", remap_field_info(datasource), :first, :last do |b| %>
-    <li>
-        <%= b.check_box %>
-        <%= b.label %>
-    </li>
-<% end %>
-</ul>
+        <ul class="list-gray-boxes">
+        <%= f.collection_check_boxes datasource['class_name'] + "_include", remap_field_info(datasource), :first, :last do |b| %>
+            <li>
+                <%= b.check_box %>
+                <%= b.label %>
+            </li>
+        <% end %>
+        </ul>
 
     </div>
     <hr>
