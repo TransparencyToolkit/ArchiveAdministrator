@@ -293,6 +293,8 @@ class ArchivesController < ApplicationController
 
   # Changes the format of a hash param from that passed in the form
   def format_hash_param(hash_param)
-    return { hash_param[:link_title] => hash_param[:link] }
+    formatted = Hash.new
+    hash_param.each{|param| formatted[param[:link_title]] = param[:link] }
+    return formatted
   end
 end
