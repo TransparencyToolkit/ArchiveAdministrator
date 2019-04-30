@@ -249,7 +249,7 @@ class ArchivesController < ApplicationController
       ocr_out_path: "/home/tt/ocr_out",
       save_export_path: "/home/tt/export_out",
       sync_jsondata_path: "tt@#{ips[:public_vm_ip]}:/home/tt/ocr_out/ocred_docs",
-      sync_rawdoc_path: "tt@#{ips[:public_vm_ip]}:/home/tt/ocr_out/raw_docs",
+      sync_rawdoc_path: "tt@#{ips[:public_vm_ip]}:/",
       sync_config_path: "tt@#{ips[:public_vm_ip]}:/tt-ansible/DocManager/dataspec_files",
       archive_key: SecureRandom.base64(100)
     }
