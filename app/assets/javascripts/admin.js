@@ -1,5 +1,20 @@
+_.templateSettings = {
+      interpolate: /\{\{(.+?)\}\}/g
+}
+
+
 $(document).ready(function() {
 
+    /* Archive Edit */
+    $('.btn-add-link').on('click', function(e) {
+        e.preventDefault()
+        var html_template = $('#template-add-link').html()
+        var template = _.template(html_template)
+        var form_template = template({ type: $(this).data('type') })
+        $('#list-' + $(this).data('type')).append(form_template)
+    })
+
+    /* Publish Archive */
     $('.switch-datasource').on('click', function() {
         var id = $(this).attr('id')
         if ($(this).is(':checked')) {
