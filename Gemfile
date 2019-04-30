@@ -13,10 +13,14 @@ gem 'crono'
 gem 'devise'
 
 # UI
+gem 'jquery-rails'
+gem 'underscore-rails'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
+
 # undeclared dep for uglifier: pure ruby javascript interpreter:
 gem 'therubyracer', '>= 0.12.3'
+
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootsnap', '>= 1.1.0', require: false
