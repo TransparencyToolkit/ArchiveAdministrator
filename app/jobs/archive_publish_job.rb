@@ -6,12 +6,12 @@ class ArchivePublishJob < ApplicationJob
   def perform(archive, settings_by_type, last_export_date)
     save_public_archive_service_configs(archive)
     settings_by_type.each do |doc_type, type_values|
-      export_configs_from_dm(archive, doc_type, type_values)
+      export_configs_from_dm(archive, doc_type, type_values, last_export_date)
     end
   end
 
   # Export the configs from DocManager
-  def export_configs_from_dm(archive, doc_type, type_values)
+  def export_configs_from_dm(archive, doc_type, type_values, last_export_date)
     begin
       c = Curl.get("#{set_dm_path(archive)}/export_to_public",
                    {date_changed_since: last_export_date,
@@ -20,9 +20,9 @@ class ArchivePublishJob < ApplicationJob
                     fields_to_include_in_export: JSON.pretty_generate(type_values[:fields_to_include]),
                     index_name: archive.index_name,
                     doc_type: doc_type})
-    rescue # Retry if it fails (for example, if DM hasn't started yet)
+    rescue # Retry if it fails (for example, if DM hasn't started yet)      
       sleep(5)
-      export_configs_from_dm(archive, doc_type, type_values)
+      export_configs_from_dm(archive, doc_type, type_values, last_export_date)
     end
   end
   
