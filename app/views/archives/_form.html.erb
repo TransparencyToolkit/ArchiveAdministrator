@@ -36,10 +36,12 @@
             <div class="form-group more-bottom">
                 <label>Top Bar Links</label>
                 <ul id="list-topbar_links" class="list-unstyled add-bottom">
+                    <% if @archive.topbar_links %>
                     <li class="add-bottom">
                         <input type="text" placeholder="Link Title" class="form-control add-bottom" name="archive[topbar_links][link_title]" value="<%= @archive.topbar_links['link_title'] %>">
                         <input type="text" placeholder="http://link.com" class="form-control" name="archive[topbar_links][link]" value="<%= @archive.topbar_links['link'] %>">
                     </li>
+                    <% end %>
                 </ul>
                 <a href="#" data-type="topbar_links" class="btn-add-link">
                     Add Link
@@ -48,10 +50,12 @@
             <div class="form-group">
                 <label>Info Dropdown Links</label>
                 <ul id="list-info_dropdown_links" class="list-unstyled add-bottom">
+                    <% if @archive.info_dropdown_links %>
                     <li class="add-bottom">
                         <input type="text" placeholder="Link Title" class="form-control add-bottom" name="archive[dropdown_links][link_title]" value="<%= @archive.info_dropdown_links['link_title'] %>">
                         <input type="text" placeholder="http://link.com" class="form-control" name="archive[dropdown_links][link]" value="<%= @archive.info_dropdown_links['link'] %>">
                     </li>
+                    <% end %>
                 </ul>
                 <a href="#" data-type="info_dropdown_links" class="btn-add-link">
                     Add Link
