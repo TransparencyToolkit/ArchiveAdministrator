@@ -159,10 +159,11 @@ class ArchivesController < ApplicationController
     @archive.users << User.find(current_user.id)
     @archive.admin_users = [current_user.id]
     
-    # Create the archive on DocManager
-    ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), index_name, @archive)
-    
     if @archive.save
+      # Create the archive on DocManager
+      ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), index_name, @archive)
+
+      # Update last access date and start
       update_last_access_date(@archive)
       touch_start(@archive)
       redirect_to @archive
