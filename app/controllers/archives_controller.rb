@@ -268,10 +268,11 @@ class ArchivesController < ApplicationController
     if Archive.find_by(archive_gateway_ip: ip_base+"1")
       set_archive_ip
     else
+      # these IPs need to be aligned on a /30 CIDR subnet
       return { archive_gateway_ip: ip_base+"1",
                archive_vm_ip: ip_base+"2",
-               public_gateway_ip: ip_base+"3",
-               public_vm_ip: ip_base+"4"
+               public_gateway_ip: ip_base+"5",
+               public_vm_ip: ip_base+"6"
       }
     end
   end
