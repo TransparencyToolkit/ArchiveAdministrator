@@ -159,10 +159,11 @@ class ArchivesController < ApplicationController
     @archive.users << User.find(current_user.id)
     @archive.admin_users = [current_user.id]
     
-    # Create the archive on DocManager
-    ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), index_name, @archive)
-    
     if @archive.save
+      # Create the archive on DocManager
+      ArchiveCreatorJob.perform_now(gen_archive_config_json(@archive), index_name, @archive)
+
+      # Update last access date and start
       update_last_access_date(@archive)
       touch_start(@archive)
       redirect_to @archive
@@ -267,10 +268,11 @@ class ArchivesController < ApplicationController
     if Archive.find_by(archive_gateway_ip: ip_base+"1")
       set_archive_ip
     else
+      # these IPs need to be aligned on a /30 CIDR subnet
       return { archive_gateway_ip: ip_base+"1",
                archive_vm_ip: ip_base+"2",
-               public_gateway_ip: ip_base+"3",
-               public_vm_ip: ip_base+"4"
+               public_gateway_ip: ip_base+"5",
+               public_vm_ip: ip_base+"6"
       }
     end
   end
@@ -294,7 +296,7 @@ class ArchivesController < ApplicationController
   # Changes the format of a hash param from that passed in the form
   def format_hash_param(hash_param)
     formatted = Hash.new
-    hash_param.each{|param| formatted[param[:link_title]] = param[:link] }
+    hash_param.each{|param| formatted[param[:link_title]] = param[:link] } if hash_param
     return formatted
   end
 end
