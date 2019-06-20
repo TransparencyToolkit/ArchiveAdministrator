@@ -73,5 +73,14 @@
         <%= yield %>
     </div>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <!-- Custom JS Things -->
+    <script src="/speakingurl.min.js"></script>
+    <script src="/slugify.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#archive_public_archive_subdomain').slugify('#archive_human_readable_name')
+    })
+    </script>
+
   </body>
 </html>
