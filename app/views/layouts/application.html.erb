@@ -72,15 +72,22 @@
         <% end %>
         <%= yield %>
     </div>
+    <%= params["controller"] %> - <%= params["action"] %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <!-- Custom JS Things -->
+    <% if params["controller"] == "archives" and ['new', 'edit'].include? params["action"] %>
     <script src="/speakingurl.min.js"></script>
     <script src="/slugify.min.js"></script>
     <script>
     $(document).ready(function() {
+        <% if params["action"] == "new" %>
         $('#archive_public_archive_subdomain').slugify('#archive_human_readable_name')
+        <% else %>
+        $('#archive_public_archive_subdomain').on('blur', function() {
+            makeSubdomainSlug($(this).val(), 'archive_public_archive_subdomain')
+        })
+        <% end %>
     })
     </script>
-
+    <% end %>
   </body>
 </html>

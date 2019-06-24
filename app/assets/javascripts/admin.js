@@ -2,6 +2,14 @@ _.templateSettings = {
       interpolate: /\{\{(.+?)\}\}/g
 }
 
+var makeSubdomainSlug = function(text, slug_id) {
+    if (text) {
+        var new_slug = $.slugify(text)
+        $('#' + slug_id).val(new_slug)
+    } else {
+        alert('You need to enter a name for sub-domain')
+    }
+}
 
 $(document).ready(function() {
 
