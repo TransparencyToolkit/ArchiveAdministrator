@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ArchiveAdministrator</title>
+    <title>THE ARCHIVE NETWORK</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link rel="stylesheet" media="all" href="/default.css" />
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <link rel="shortcut icon" type="image/x-icon" href="/tan-favicon.png" />
   </head>
   <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -18,9 +19,9 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="/">
-                    <img alt="Logo" src="/favicon.png">
+                    <img alt="Logo" src="/tan-logo-white.png">
                     <span class="title">
-                        TRANSPARENCY TOOLKIT
+                        THE ARCHIVE NETWORK
                     </span>
                 </a>
             </div>
@@ -72,7 +73,6 @@
         <% end %>
         <%= yield %>
     </div>
-    <%= params["controller"] %> - <%= params["action"] %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <% if params["controller"] == "archives" and ['new', 'edit'].include? params["action"] %>
     <script src="/speakingurl.min.js"></script>
