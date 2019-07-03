@@ -10,7 +10,7 @@
             <div class="input-group">
                 <span class="input-group-addon">https://</span>
                 <%= f.text_field :public_archive_subdomain, class: "form-control" %>
-                <span class="input-group-addon">.transparency.tools</span>
+                <span class="input-group-addon">.<%= ENV['PREPUB_ARCHIVE_DOMAIN'].gsub("https://", "")%></span>
             </div>
         </div>
     </div>
